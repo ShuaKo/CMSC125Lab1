@@ -105,10 +105,15 @@
 		context.font = "15px Calibri";
 		for(r = 0; r<temp; r++){
 			context.fillText("resource " + resources[r].number,10,60+(r*20));
-			if(resources[r].isUsed)
+			if(resources[r].isUsed){
+				context.fillStyle = "#ff3333";
 				context.fillText("Status: Used",100,60+(r*20));
-			else
+			}
+			else{
+				context.fillStyle = "#33ff33";
 				context.fillText("Status: Free",100,60+(r*20));
+			}
+			context.fillStyle = "#bbb";
 		}
 		context.font = "30px Calibri";
 		context.fillText("Users(" + temp2 + ")" ,250,40);
@@ -119,12 +124,18 @@
 			if(users[r].isActive && users[r].resourceUsed.length > 0 ){
 				var timeRem = users[r].timeUsed[0];
 				console.log(timeRem);
+				context.fillStyle = "#ff3333";
 				context.fillText("Status: Using " + users[r].resourceUsed[0] + " (" + timeRem + ")",350,60+(r*20));
 			}
-			else if(users[r].resourceUsed.length > 0)
+			else if(users[r].resourceUsed.length > 0){
+				context.fillStyle = "#ffff33";
 				context.fillText("Status: Waiting for "+users[r].resourceUsed[0] ,350,60+(r*20));
-			else
+			}
+			else{
+				context.fillStyle = "#3333ff";
 				context.fillText("Status: Done",350,60+(r*20));
+			}
+			context.fillStyle = "#bbb";
 		}
 		for(r = 0; r<temp; r++){
 			resources[r].isUsed = false;
