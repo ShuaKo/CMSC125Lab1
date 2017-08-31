@@ -1,0 +1,135 @@
+<html>
+<head></head>
+<body>
+	<canvas id="myCanvas" width = "500" height = "700" style = "border:1px solid"></canvas>
+</body>
+<script>
+	var canvas = document.getElementById("myCanvas");
+	var context = canvas.getContext("2d");
+//objects
+	function Resource(name){
+		this.number = name;
+		this.isUsed = false;
+	}
+	function User(name){
+		this.number =  name;
+		this.resourceUsed = [];
+		this.timeUsed = [];
+		this.timeSave = []
+		this.isActive = false;
+
+		this.queueResource = function(name, duration){
+			console.log("Name: ", this.number);
+			console.log("values added", name, duration);
+			var temp = this.resourceUsed.length;
+			for(i = 0; i<temp; i++){
+				if(name == this.resourceUsed[i].name){
+					console.log("It already exist")
+					return true;
+				}
+			}
+			this.resourceUsed.push(name);
+			this.timeUsed.push(duration);
+			this.timeSave.push(duration);
+			console.log("success")
+			console.log(this.resourceUsed);
+			console.log(this.timeUsed);
+			return false;
+		}
+	}
+	function Randomizer(max){
+		var temp = Math.floor((Math.random() * max) + 1);
+		return temp;
+	}
+//initialization
+	var resources = [];
+	var temp = Randomizer(30);
+	for(i = 0; i < temp; i++){	
+		resources.push(new Resource(i+1));
+	}
+	var users = [];
+	var temp2 = Randomizer(30);
+	for(i = 0; i < temp2; i++){	
+		users.push(new User(i+1));
+	}
+	console.log(users);
+	for(i = 0; i < temp2;){	
+		var scout = i;
+		var usingRes = Randomizer(temp);
+		for(x = 0; x<usingRes; x++){
+			do{
+				var temp3 = Randomizer(temp);
+				var temp4 = Randomizer(30);
+				var answer = users[scout].queueResource(temp3, temp4);
+			}while(answer);
+		}
+		i = scout+1;
+	}
+//main loop
+	function Time(){
+		//logic
+		for(c = 0; c<temp2; c++){
+			console.log(users[c].resourceUsed[0]);
+			console.log(users[c].resourceUsed.length);
+			console.log(users[c].isActive);
+			if(users[c].resourceUsed.length > 0){
+				if(resources[(users[c].resourceUsed[0])-1].isUsed == false){
+					users[c].isActive = true;
+					resources[(users[c].resourceUsed[0])-1].isUsed = true;
+					console.log("timer", users[c].timeUsed[0]);
+					if(users[c].timeUsed[0]> 0){
+						users[c].timeUsed[0]--;
+					}
+					else{
+						console.log("shifting");
+						console.log(users[c].resourceUsed);
+						users[c].resourceUsed.shift();
+						users[c].timeUsed.shift();
+						users[c].timeSave.shift();
+					}
+				}else{
+					users[c].isActive = false;
+				}
+			}
+			else
+				users[c].isActive = false;
+		}
+		
+		//drawing
+		context.fillStyle = "#000";
+		context.fillRect(0,0,500,700);
+		context.fillStyle = "#bbb";
+		context.font = "30px Calibri";
+		context.fillText("Resources(" + temp + ")" ,10,40);
+
+		context.font = "15px Calibri";
+		for(r = 0; r<temp; r++){
+			context.fillText("resource " + resources[r].number,10,60+(r*20));
+			if(resources[r].isUsed)
+				context.fillText("Status: Used",100,60+(r*20));
+			else
+				context.fillText("Status: Free",100,60+(r*20));
+		}
+		context.font = "30px Calibri";
+		context.fillText("Users(" + temp2 + ")" ,250,40);
+
+		context.font = "15px Calibri";
+		for(r = 0; r<temp2; r++){
+			context.fillText("resource " + users[r].number,250,60+(r*20));
+			if(users[r].isActive && users[r].resourceUsed.length > 0 ){
+				var timeRem = users[r].timeUsed[0];
+				console.log(timeRem);
+				context.fillText("Status: Using " + users[r].resourceUsed[0] + " (" + timeRem + ")",350,60+(r*20));
+			}
+			else if(users[r].resourceUsed.length > 0)
+				context.fillText("Status: Waiting for "+users[r].resourceUsed[0] ,350,60+(r*20));
+			else
+				context.fillText("Status: Done",350,60+(r*20));
+		}
+		for(r = 0; r<temp; r++){
+			resources[r].isUsed = false;
+		}
+	}
+	setInterval(Time, 500);
+</script>
+</html>
